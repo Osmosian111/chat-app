@@ -1,0 +1,14 @@
+import z from "zod";
+
+export const CreateUserSchema = z.object({
+  email: z.string().min(1).max(150).email(),
+  password: z.string().min(8).max(150),
+  name: z.string().min(3).max(150),
+});
+export const SigninSchema = z.object({
+  email: z.string().min(1).max(150).email(),
+  password: z.string().min(8).max(150),
+});
+export const CreateRoomSchema = z.object({
+  name: z.string().min(3).max(150),
+});
