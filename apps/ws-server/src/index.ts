@@ -51,19 +51,24 @@ wss.on("connection", (ws, request) => {
         ws.send(`Room joined ${parsedData.roomId}`);
         return;
       }
-      ws.send(`You are already joined in a room named: ${userExist.rooms}`)
+      ws.send(`You are already joined in a room named: ${userExist.rooms}`);
     }
 
     if (parsedData.type === "chat") {
-      const user = users.find((user) => user.userId === userId);
-      if (!user) return;
-      console.log(user);
+      const user = users.find((user) => user.ws === ws);
+      if (!user) {
+        ws.send(
+          JSON.stringify({
+            msg: "",
+          })
+        );
+        return;
+      }
       const roomOfUsers = users.filter((u) => {
         if (user.rooms === parsedData.roomId) {
           return u;
         }
       });
-      console.log(roomOfUsers);
       roomOfUsers.map((u) => {
         u.ws.send(
           JSON.stringify({

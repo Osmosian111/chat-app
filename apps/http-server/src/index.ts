@@ -87,9 +87,37 @@ app.post("/room", auth, async (req: RequestWithUserId, res) => {
     });
   } catch (error) {
     res.send({
-      msg:"Room already exit"
-    })
+      msg: "Room already exit",
+    });
   }
+});
+
+app.get("/chats/:roomId", async (req, res) => {
+  const roomId = req.params.roomId;
+  const message = await prismaClient.chat.findMany({
+    where: {
+      roomId: roomId,
+    },
+    orderBy: {
+      id: "desc",
+    },
+    take: 20,
+  });
+  res.json({
+    message,
+  });
+});
+
+app.get("/room/:slug", async (req, res) => {
+  const slug = req.params.slug;
+  const room = await prismaClient.room.findFirst({
+    where: {
+      slug,
+    },
+  });
+  res.json({
+    room,
+  });
 });
 
 app.listen(PORT);
