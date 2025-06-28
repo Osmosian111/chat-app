@@ -3,6 +3,7 @@ require("dotenv").config();
 import { WebSocketServer, WebSocket } from "ws";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "@repo/backend-common/config";
+import { prismaClient } from "@repo/db/client";
 
 interface User {
   userId: string;
@@ -37,7 +38,7 @@ wss.on("connection", (ws, request) => {
   const userId = getUserId(token);
   if (!userId) return;
 
-  ws.on("message", (data) => {
+  ws.on("message", async (data) => {
     const parsedData = JSON.parse(data.toString());
 
     if (parsedData.type === "join_room") {
@@ -59,7 +60,7 @@ wss.on("connection", (ws, request) => {
       if (!user) {
         ws.send(
           JSON.stringify({
-            msg: "",
+            msg: "Join Room First",
           })
         );
         return;
@@ -69,14 +70,27 @@ wss.on("connection", (ws, request) => {
           return u;
         }
       });
-      roomOfUsers.map((u) => {
-        u.ws.send(
-          JSON.stringify({
-            type: "chat",
+      try {
+        console.log("hello");
+        await prismaClient.chat.create({
+          data: {
+            userId,
             message: parsedData.message,
-          })
-        );
-      });
+            roomId: parsedData.roomId,
+          },
+        });
+
+        roomOfUsers.map((u) => {
+          u.ws.send(
+            JSON.stringify({
+              type: "chat",
+              message: parsedData.message,
+            })
+          );
+        });
+      } catch (error) {
+        console.log("Room does not exist");
+      }
     }
 
     if (parsedData.type === "leave_room") {
