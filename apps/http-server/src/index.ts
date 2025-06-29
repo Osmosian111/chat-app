@@ -11,18 +11,20 @@ import {
 } from "@repo/common/types";
 import { prismaClient } from "@repo/db/client";
 import { RequestWithUserId } from "@repo/backend-common/interfaces";
-import {parse, serialize} from "cookie"
+import { parse, serialize } from "cookie";
 
-import cors from 'cors';
+import cors from "cors";
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
-app.use(cors({
-  origin: 'http://localhost:4000', 
-  credentials: true             
-}));
+app.use(
+  cors({
+    origin: "http://localhost:4000",
+    credentials: true,
+  })
+);
 
 app.post("/signup", async (req, res) => {
   const parsedData = CreateUserSchema.safeParse(req.body);
@@ -44,7 +46,8 @@ app.post("/signup", async (req, res) => {
     return;
   } catch (error) {
     res.json({
-      msg: "User already exist",exist:true
+      msg: "User already exist",
+      exist: true,
     });
   }
 });
@@ -70,17 +73,23 @@ app.post("/signin", async (req, res) => {
   }
   const token = jwt.sign({ userId: user.id }, JWT_SECRET);
 
-  res.setHeader("Set-Cookie" ,serialize('chat-app-token',token,{
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'development',
-    path: '/',
-    maxAge: 60 * 60 * 24
-  }))
+  res.setHeader(
+    "Set-Cookie",
+    serialize("chat-app-token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24,
+    })
+  );
 
-  res.send({ token });
+  res.send({ isSignedInSuccess: true });
 });
 
-app.post("/room", auth, async (req: RequestWithUserId, res) => {
+app.use(auth);
+
+app.post("/room", async (req: RequestWithUserId, res) => {
   const parsedData = CreateRoomSchema.safeParse(req.body);
   if (!parsedData.success) {
     res.send({ msg: parsedData.error.issues });

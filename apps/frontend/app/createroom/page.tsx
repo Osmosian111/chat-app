@@ -1,23 +1,30 @@
+"use client";
+
 import axios from "axios";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { BACKEND_URL } from "../config";
 
 export default function JoinRoom() {
+  const [form, setForm] = useState({ roomName: "" });
 
-  const [form,setForm] = useState({name:""})
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-  const handleChange = (e:ChangeEvent<HTMLInputElement>) => {
-    setForm({...form,[e.target.name]:e.target.value});
-  }
-
-  const handleSubmit = (e:FormEvent<HTMLFormElement>) =>{
-    e.preventDefault()
-    axios.post(`${BACKEND_URL}/room/${form.name}`);
-  }
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(form)
+    const response = await axios.post(`${BACKEND_URL}/room`,{name:form.roomName}, {
+      withCredentials:true,
+    });
+    if(response.data.exist){
+      
+    }
+  };
 
   return (
     <div>
-      <h1>Join Room</h1>
+      <h1>Create Room</h1>
       <form onSubmit={handleSubmit}>
         <label htmlFor="roomName">Room Name</label>
         <br />
