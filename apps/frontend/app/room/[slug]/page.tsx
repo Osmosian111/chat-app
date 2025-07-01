@@ -1,7 +1,7 @@
 import { BACKEND_URL } from "@/app/config";
 import ChatRoom from "@/component/ChatRoom";
 import axios from "axios";
-import getToken from "./getToken";
+import getToken from "@/fatchInfo/getToken";
 
 async function getRoomId(slug: string) {
   const token =await getToken()

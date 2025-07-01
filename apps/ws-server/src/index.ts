@@ -52,7 +52,7 @@ wss.on("connection", (ws, request) => {
         ws.send(`Room joined ${parsedData.roomId}`);
         return;
       }
-      ws.send(`You are already joined in a room named: ${userExist.rooms}`);
+      ws.send(`You are already in a room`);
     }
 
     if (parsedData.type === "chat") {
@@ -60,6 +60,7 @@ wss.on("connection", (ws, request) => {
       if (!user) {
         ws.send(
           JSON.stringify({
+            type: "notify",
             msg: "Join Room First",
           })
         );
@@ -75,7 +76,7 @@ wss.on("connection", (ws, request) => {
         await prismaClient.chat.create({
           data: {
             userId,
-            message: parsedData.message,
+            message: parsedData.msg,
             roomId: parsedData.roomId,
           },
         });
@@ -84,7 +85,7 @@ wss.on("connection", (ws, request) => {
           u.ws.send(
             JSON.stringify({
               type: "chat",
-              message: parsedData.message,
+              message: parsedData.msg,
             })
           );
         });
@@ -104,6 +105,7 @@ wss.on("connection", (ws, request) => {
 
   ws.send(
     JSON.stringify({
+      type: "notify",
       msg: `connected to ws server: ${userId}`,
     })
   );

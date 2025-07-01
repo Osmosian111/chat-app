@@ -1,3 +1,5 @@
+"use client"
+
 import { BACKEND_URL, WS_URL } from "@/app/config";
 import axios from "axios";
 import { get } from "http";
@@ -20,6 +22,7 @@ export default function useSocket() {
             setLoading(false)
         }
     } 
+    socket()
   }, []);
   return {loading,socket}
 }

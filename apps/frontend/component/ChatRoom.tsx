@@ -1,5 +1,5 @@
 import { BACKEND_URL } from "@/app/config";
-import getToken from "@/app/room/[slug]/getToken";
+import getToken from "@/fatchInfo/getToken";
 import axios from "axios";
 import ChatRoomClient from "./ChatRoomClient";
 

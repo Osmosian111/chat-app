@@ -18,6 +18,7 @@ const ChatRoomClient = ({
   };
 
   const handleClick = () => {
+    if(!socket) return
     socket?.send(
       JSON.stringify({
         type: "chat",
@@ -29,6 +30,7 @@ const ChatRoomClient = ({
   };
 
   useEffect(() => {
+    console.log(socket?.url)
     if (socket && !loading) {
       socket.send(
         JSON.stringify({
@@ -36,9 +38,10 @@ const ChatRoomClient = ({
           roomId: id,
         })
       );
+
       socket.onmessage = (event) => {
         const parsedData = JSON.parse(event.data);
-        setChats((c) => [...c, { message: parsedData.message }]);
+        setChats((c) => [...c, { message: parsedData.msg }]);
       };
     }
   }, [loading, socket, id]);
