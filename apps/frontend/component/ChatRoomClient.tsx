@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import useSocket from "@/hooks/useSocket";
 import { ChangeEvent, useEffect, useState } from "react";
 
@@ -10,27 +10,27 @@ const ChatRoomClient = ({
   id: string;
 }) => {
   const [chats, setChats] = useState<{ message: string }[]>(message || []);
-  const [msg, setMsg] = useState("");
+  const [currentMessage, setCurrentMessage] = useState("");
   const { loading, socket } = useSocket();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setMsg(e.target.value);
+    setCurrentMessage(e.target.value);
   };
 
   const handleClick = () => {
-    if(!socket) return
+    if (!socket) return;
+    console.log(id);
     socket?.send(
       JSON.stringify({
         type: "chat",
-        message: msg,
+        message:currentMessage,
         roomId: id,
       })
     );
-    setMsg("");
+    setCurrentMessage("");
   };
 
   useEffect(() => {
-    console.log(socket?.url)
     if (socket && !loading) {
       socket.send(
         JSON.stringify({
@@ -41,19 +41,24 @@ const ChatRoomClient = ({
 
       socket.onmessage = (event) => {
         const parsedData = JSON.parse(event.data);
-        setChats((c) => [...c, { message: parsedData.msg }]);
+        console.log(parsedData)
+        if (parsedData.type == "notify") {
+          console.log(parsedData.message)
+          return
+        };
+        setChats((c) => [...c, { message: parsedData.message }]);
       };
     }
   }, [loading, socket, id]);
   return (
     <div>
       <div>
-        {chats.map((m,index)=>{
-          return ( <p key={index}>{m.message}</p> )
+        {chats.map((m, index) => {
+          return <p key={index}>{m.message}</p>;
         })}
       </div>
       <div>
-        <input type="text" value={msg} onChange={handleChange} />
+        <input type="text" value={currentMessage} onChange={handleChange} />
         <button onClick={handleClick}>Send</button>
       </div>
     </div>
