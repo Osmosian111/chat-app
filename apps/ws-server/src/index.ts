@@ -49,21 +49,28 @@ wss.on("connection", (ws, request) => {
           ws,
           rooms: parsedData.roomId,
         });
-        ws.send(JSON.stringify({
+        ws.send(
+          JSON.stringify({
             type: "notify",
             message: "Room joined",
-          }));
+          })
+        );
         return;
       }
-      ws.send(JSON.stringify({
-            type: "notify",
-            message: "Already in a room",
-          }));
+      ws.send(
+        JSON.stringify({
+          type: "notify",
+          message: "Already in a room",
+        })
+      );
+      return;
     }
 
     if (parsedData.type === "chat") {
-      const user = users.find((user) => user.ws === ws);
-      console.log(user)
+      console.log(parsedData)
+      const user = users.find(
+        (user) => user.userId === userId && user.rooms === parsedData.roomId
+      );
       if (!user) {
         ws.send(
           JSON.stringify({
@@ -73,13 +80,8 @@ wss.on("connection", (ws, request) => {
         );
         return;
       }
-      const roomOfUsers = users.filter((u) => {
-        if (user.rooms === parsedData.roomId) {
-          return u;
-        }
-      });
+      const roomOfUsers = users.filter((u) => u.rooms === parsedData.roomId);
       try {
-        console.log(parsedData)
         await prismaClient.chat.create({
           data: {
             userId,
@@ -107,8 +109,13 @@ wss.on("connection", (ws, request) => {
           return user;
         }
       });
+      ws.send(
+        JSON.stringify({
+          type: "notify",
+          message: `Room left`,
+        })
+      );
     }
-    
   });
 
   ws.send(
