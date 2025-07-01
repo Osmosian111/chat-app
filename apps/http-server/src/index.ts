@@ -10,7 +10,7 @@ import {
   SigninSchema,
 } from "@repo/common/types";
 import { prismaClient } from "@repo/db/client";
-import { RequestWithUserId } from "@repo/backend-common/interfaces";
+import { NewRequest } from "@repo/backend-common/interfaces";
 import { parse, serialize } from "cookie";
 
 import cors from "cors";
@@ -89,7 +89,7 @@ app.post("/signin", async (req, res) => {
 
 app.use(auth);
 
-app.post("/room", async (req: RequestWithUserId, res) => {
+app.post("/room", async (req: NewRequest, res) => {
   const parsedData = CreateRoomSchema.safeParse(req.body);
   if (!parsedData.success) {
     res.send({ msg: parsedData.error.issues });
@@ -142,6 +142,11 @@ app.get("/room/:slug", async (req, res) => {
   res.json({
     room,
   });
+});
+
+app.get("/fatchtoken", (req: NewRequest, res) => {
+  const token = req.token;
+  res.json({ token });
 });
 
 app.listen(PORT);

@@ -4,6 +4,7 @@ export type JwtPayload = {
   userId?: string;
 };
 
-export interface RequestWithUserId extends Request {
-    userId?:string
+export interface NewRequest extends Request {
+    userId?:string,
+    token?:string
 }

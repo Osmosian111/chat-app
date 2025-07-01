@@ -1,5 +1,6 @@
 import { BACKEND_URL, WS_URL } from "@/app/config";
 import axios from "axios";
+import { get } from "http";
 import { useEffect, useState } from "react";
 
 export default function useSocket() {
@@ -8,7 +9,7 @@ export default function useSocket() {
 
   async function getToken() {
     const response = await axios.get(`${BACKEND_URL}/fatchtoken`, { withCredentials: true });
-    return response.data.token ?? " "
+    return response.data.token;
   }
 
   useEffect(() => {
