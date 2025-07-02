@@ -24,7 +24,7 @@ app.use(
     origin: "http://localhost:4000",
     credentials: true,
   })
-);
+); 
 
 app.post("/signup", async (req, res) => {
   const parsedData = CreateUserSchema.safeParse(req.body);
@@ -127,6 +127,10 @@ app.get("/chats/:roomId", async (req, res) => {
     },
     take: 20,
   });
+  if (!message.length) {
+    res.json({ msg: "empty" });
+    return;
+  }
   res.json({
     message,
   });
@@ -139,6 +143,12 @@ app.get("/room/:slug", async (req, res) => {
       slug,
     },
   });
+  if (!room) {
+    res.json({
+      msg:"No room found"
+    })
+    return
+  }
   res.json({
     room,
   });
@@ -146,6 +156,12 @@ app.get("/room/:slug", async (req, res) => {
 
 app.get("/fatchtoken", (req: NewRequest, res) => {
   const token = req.token;
+  if(!token){
+    res.json({
+      msg:"Something is wrong"
+    })
+    return
+  }
   res.json({ token });
 });
 

@@ -17,9 +17,6 @@ export default function JoinRoom() {
     const response = await axios.post(`${BACKEND_URL}/room`,{name:form.roomName}, {
       withCredentials:true,
     });
-    if(response.data.exist){
-      
-    }
   };
 
   return (
