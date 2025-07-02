@@ -33,10 +33,26 @@ wss.on("connection", (ws, request) => {
 
   const queryParams = new URLSearchParams(url.split("?")[1]);
   const token = queryParams.get("token");
-  if (!token) return;
+  if (!token) {
+    ws.send(
+      JSON.stringify({
+        type: "notify",
+        message: "Give token",
+      })
+    );
+    return;
+  }
 
   const userId = getUserId(token);
-  if (!userId) return;
+  if (!userId) {
+    ws.send(
+      JSON.stringify({
+        type: "notify",
+        message: "Provide userId",
+      })
+    );
+    return;
+  }
 
   ws.on("message", async (data) => {
     const parsedData = JSON.parse(data.toString());
@@ -67,7 +83,6 @@ wss.on("connection", (ws, request) => {
     }
 
     if (parsedData.type === "chat") {
-      console.log(parsedData)
       const user = users.find(
         (user) => user.userId === userId && user.rooms === parsedData.roomId
       );
@@ -99,7 +114,12 @@ wss.on("connection", (ws, request) => {
           );
         });
       } catch (error) {
-        console.log("Room does not exist");
+        ws.send(
+          JSON.stringify({
+            type: "notify",
+            message: "Room does not exist",
+          })
+        );
       }
     }
 
