@@ -24,7 +24,7 @@ app.use(
     origin: "http://localhost:4000",
     credentials: true,
   })
-); 
+);
 
 app.post("/signup", async (req, res) => {
   const parsedData = CreateUserSchema.safeParse(req.body);
@@ -145,9 +145,9 @@ app.get("/room/:slug", async (req, res) => {
   });
   if (!room) {
     res.json({
-      msg:"No room found"
-    })
-    return
+      msg: "No room found",
+    });
+    return;
   }
   res.json({
     room,
@@ -156,11 +156,11 @@ app.get("/room/:slug", async (req, res) => {
 
 app.get("/fatchtoken", (req: NewRequest, res) => {
   const token = req.token;
-  if(!token){
+  if (!token) {
     res.json({
-      msg:"Something is wrong"
-    })
-    return
+      msg: "Something is wrong",
+    });
+    return;
   }
   res.json({ token });
 });
