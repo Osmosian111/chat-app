@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { BACKEND_URL, FRONTEND_URL } from "../config";
+import { BACKEND_URL, FRONTEND_URL } from "../../config";
 import { useRouter } from "next/navigation";
 
 export default function Signup() {

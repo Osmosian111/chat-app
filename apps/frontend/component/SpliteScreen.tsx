@@ -14,8 +14,8 @@ const SpliteScreen = ({
   const [left, right] = children;
   return (
     <div className="flex flex-1">
-      <div className={`h-full w-[${leftValue}]`}>{left}</div>
-      <div className={`h-full w-[${rightValue}]`}>{right}</div>
+      <div style={{width:`${leftValue}`}} className={`h-full`}>{left}</div>
+      <div style={{width:`${rightValue}`}} className={`h-full`}>{right}</div>
     </div>
   );
 };

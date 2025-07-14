@@ -26,11 +26,9 @@ import { type JSX } from "react";
 //   );
 // }
 
-import React from 'react'
-
 const Card = () => {
   return (
-    <div className="bg-white h-[100px]">Card</div>
+    <div className="text-black flex justify-center items-center bg-white h-[50px] w-full mb-0.5">Card</div>
   )
 }
 

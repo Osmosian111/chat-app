@@ -5,7 +5,15 @@ import SpliteScreen from "@/component/SpliteScreen";
 const Chat = () => {
   return (
     <>
-      <SpliteScreen leftValue="40%" rightValue="60%">
+      {/* <div className="flex flex-1">
+      <div className="w-[40%]">
+        <Card/>
+      </div>
+      <div className="w-[60%]">
+        right
+      </div>
+    </div> */}
+      <SpliteScreen leftValue="35%" rightValue="65%">
         <LeftBlock></LeftBlock>
         <RightBlock></RightBlock>
       </SpliteScreen>
