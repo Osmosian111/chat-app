@@ -1,11 +1,13 @@
+import Header from "@/component/Header";
+
 export default function MainLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <div>
-      <div className="w-screen h-[64px] bg-green-700">hello</div>
+    <div className="flex flex-col h-screen">
+      <Header />
       {children}
     </div>
   );
