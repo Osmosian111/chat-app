@@ -1,13 +1,15 @@
-import { useRouter } from 'next/navigation'
-import React from 'react'
-import { FRONTEND_URL } from './config'
+"use client";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const Home = () => {
-    const router = useRouter()
-    router.push(`${FRONTEND_URL}/home`)
-  return (
-    <div>Home</div>
-  )
-}
+  const router = useRouter();
 
-export default Home
+  useEffect(() => {
+    router.push("/home"); // Or `${FRONTEND_URL}/home` if needed
+  }, [router]);
+
+  return <div>Redirecting...</div>;
+};
+
+export default Home;
