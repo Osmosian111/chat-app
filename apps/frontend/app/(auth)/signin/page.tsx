@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { BACKEND_URL, FRONTEND_URL } from "../config";
+import { BACKEND_URL, FRONTEND_URL } from "../../config";
 import axios from "axios";
 
 export default function Signin() {
