@@ -1,6 +1,6 @@
 interface InputType {
-  arg: "name" | "password" | "email";
-  type: "text" | "email" | "password";
+  arg: "name" | "password" | "email" | "message";
+  type: "text" | "email" | "password"
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value: string;
 }
