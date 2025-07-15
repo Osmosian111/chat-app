@@ -29,7 +29,7 @@ app.use(
 app.post("/signup", async (req, res) => {
   const parsedData = CreateUserSchema.safeParse(req.body);
   if (!parsedData.success) {
-    res.send({ msg: parsedData.error.issues });
+    res.send({ msg: parsedData.error.issues,Success:false });
     return;
   }
 
@@ -42,12 +42,13 @@ app.post("/signup", async (req, res) => {
       },
     });
 
-    res.json({ msg: "New User Created" });
+    res.json({ msg: "New User Created", Success: true });
     return;
   } catch (error) {
     res.json({
       msg: "User already exist",
       exist: true,
+      Success: false,
     });
   }
 });
@@ -55,7 +56,7 @@ app.post("/signup", async (req, res) => {
 app.post("/signin", async (req, res) => {
   const parsedData = SigninSchema.safeParse(req.body);
   if (!parsedData.success) {
-    res.send({ msg: parsedData.error.issues });
+    res.json({ msg: parsedData.error.issues,Success:false });
     return;
   }
 
@@ -66,8 +67,8 @@ app.post("/signin", async (req, res) => {
     },
   });
   if (!user) {
-    res.send({
-      msg: "User does not exist",
+    res.json({
+      msg: "User does not exist",Success:false
     });
     return;
   }
@@ -84,7 +85,7 @@ app.post("/signin", async (req, res) => {
     })
   );
 
-  res.send({ isSignedInSuccess: true });
+  res.send({ Success: true });
 });
 
 app.use(auth);
@@ -92,7 +93,7 @@ app.use(auth);
 app.post("/room", async (req: NewRequest, res) => {
   const parsedData = CreateRoomSchema.safeParse(req.body);
   if (!parsedData.success) {
-    res.send({ msg: parsedData.error.issues });
+    res.json({ msg: parsedData.error.issues ,Success:false});
     return;
   }
 
@@ -106,12 +107,12 @@ app.post("/room", async (req: NewRequest, res) => {
         slug: parsedData.data.name,
       },
     });
-    res.send({
-      msg: "Room Created",
+    res.json({
+      msg: "Room Created",Success:true
     });
   } catch (error) {
-    res.send({
-      msg: "Room already exit",
+    res.json({
+      msg: "Room already exit",Success:false
     });
   }
 });
