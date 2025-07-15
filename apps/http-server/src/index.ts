@@ -11,7 +11,7 @@ import {
 } from "@repo/common/types";
 import { prismaClient } from "@repo/db/client";
 import { NewRequest } from "@repo/backend-common/interfaces";
-import { parse, serialize } from "cookie";
+import { serialize } from "cookie";
 
 import cors from "cors";
 
