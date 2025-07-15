@@ -29,7 +29,7 @@ app.use(
 app.post("/signup", async (req, res) => {
   const parsedData = CreateUserSchema.safeParse(req.body);
   if (!parsedData.success) {
-    res.send({ msg: parsedData.error.issues,Success:false });
+    res.send({ msg: parsedData.error.issues, Success: false });
     return;
   }
 
@@ -47,7 +47,7 @@ app.post("/signup", async (req, res) => {
   } catch (error) {
     res.json({
       msg: "User already exist",
-      exist: true,
+      Exist: true,
       Success: false,
     });
   }
@@ -56,7 +56,7 @@ app.post("/signup", async (req, res) => {
 app.post("/signin", async (req, res) => {
   const parsedData = SigninSchema.safeParse(req.body);
   if (!parsedData.success) {
-    res.json({ msg: parsedData.error.issues,Success:false });
+    res.json({ msg: parsedData.error.issues, Success: false });
     return;
   }
 
@@ -68,7 +68,8 @@ app.post("/signin", async (req, res) => {
   });
   if (!user) {
     res.json({
-      msg: "User does not exist",Success:false
+      msg: "User does not exist",
+      Success: false,
     });
     return;
   }
@@ -93,7 +94,7 @@ app.use(auth);
 app.post("/room", async (req: NewRequest, res) => {
   const parsedData = CreateRoomSchema.safeParse(req.body);
   if (!parsedData.success) {
-    res.json({ msg: parsedData.error.issues ,Success:false});
+    res.json({ msg: parsedData.error.issues, Success: false });
     return;
   }
 
@@ -108,11 +109,13 @@ app.post("/room", async (req: NewRequest, res) => {
       },
     });
     res.json({
-      msg: "Room Created",Success:true
+      msg: "Room Created",
+      Success: true,
     });
   } catch (error) {
     res.json({
-      msg: "Room already exit",Success:false
+      msg: "Room already exit",
+      Success: false,
     });
   }
 });
@@ -164,6 +167,17 @@ app.get("/fatchtoken", (req: NewRequest, res) => {
     return;
   }
   res.json({ token });
+});
+
+app.get("/logout", (req, res) => {
+  res.clearCookie("chat-app-token", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    path: "/",
+  });
+
+  res.json({ message: "Logged out", Success: true });
 });
 
 app.listen(PORT);

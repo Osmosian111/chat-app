@@ -25,10 +25,18 @@ const AuthForm = ({ mode }: { mode: "signup" | "signin" }) => {
       { email, name, password },
       { withCredentials: true }
     );
+    console.log(response.data.Success);
     if (response.data.Success) {
       setSuccess(true);
       if (mode === "signin") {
         router.push(`${FRONTEND_URL}/chat`);
+      }
+      if (mode === "signup") {
+        router.push(`${FRONTEND_URL}/signin`);
+      }
+    } else {
+      if (response.data.Exist) {
+        router.push(`${FRONTEND_URL}/signin`);
       }
     }
     setLoading(false);
