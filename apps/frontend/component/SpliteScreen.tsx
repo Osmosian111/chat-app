@@ -13,9 +13,16 @@ const SpliteScreen = ({
 }: SpliteScreenType) => {
   const [left, right] = children;
   return (
-    <div className="flex flex-1">
-      <div style={{width:`${leftValue}`}} className={`h-full`}>{left}</div>
-      <div style={{width:`${rightValue}`}} className={`h-full`}>{right}</div>
+    <div className="flex flex-1 bg-gray-900">
+      <div
+        style={{ width: `${leftValue}` }}
+        className={`bg-gray-900 border-r border-gray-800 p-2`}
+      >
+        {left}
+      </div>
+      <div style={{ width: `${rightValue}` }} className={`bg-gray-900 p-2`}>
+        {right}
+      </div>
     </div>
   );
 };

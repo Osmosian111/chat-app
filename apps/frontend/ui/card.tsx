@@ -28,8 +28,10 @@ import { type JSX } from "react";
 
 const Card = () => {
   return (
-    <div className="text-black flex justify-center items-center bg-white h-[50px] w-full mb-0.5">Card</div>
-  )
-}
+    <div className="bg-gray-800 text-blue-400 font-medium flex items-center justify-center h-[50px] rounded-md shadow-sm border border-gray-700">
+      Chat Header
+    </div>
+  );
+};
 
-export default Card
+export default Card;

@@ -13,19 +13,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// model User {
+//   id       String @id @unique @default(uuid())
+//   email    String @unique
+//   password String
+//   name     String
+//   rooms    Room[]
+// }
+
+// model Room {
+//   id        String   @id @unique @default(uuid())
+//   slug      String   @unique
+//   adminId   String
+//   admin     User     @relation(fields: [adminId], references: [id])
+//   chat      Chat[]
+//   createdAt DateTime @default(now())
+// }
+
 model User {
-  id       String @id @unique @default(uuid())
+  id       String @id @default(uuid())
   email    String @unique
   password String
   name     String
-  rooms    Room[]
+
+  // Rooms the user created (admin of)
+  rooms Room[] @relation("OwnedRooms")
+
+  // Rooms the user has joined (not necessarily admin)
+  joined Room[] @relation("JoinedRooms")
 }
 
 model Room {
-  id        String   @id @unique @default(uuid())
-  slug      String   @unique
-  adminId   String
-  admin     User     @relation(fields: [adminId], references: [id])
+  id      String @id @default(uuid())
+  slug    String @unique
+  adminId String
+
+  // Relation to the admin user
+  admin User @relation("OwnedRooms", fields: [adminId], references: [id])
+
+  // Members who joined the room
+  members User[] @relation("JoinedRooms")
+
   chat      Chat[]
   createdAt DateTime @default(now())
 }

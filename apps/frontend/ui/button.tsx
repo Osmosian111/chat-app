@@ -10,7 +10,7 @@ const Button = ({ text, loading = false, onClick }: ButtonType) => {
   return (
     <button
       disabled={loading}
-      className="bg-blue-500 p-2 pl-2.5 pr-2.5 border-white-2 rounded-md hover:bg-blue-700"
+      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition"
       onClick={onClick}
     >
       {text}

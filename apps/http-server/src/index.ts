@@ -11,7 +11,7 @@ import {
 } from "@repo/common/types";
 import { prismaClient } from "@repo/db/client";
 import { NewRequest } from "@repo/backend-common/interfaces";
-import { serialize } from "cookie";
+import { parse, serialize } from "cookie";
 
 import cors from "cors";
 
@@ -159,7 +159,8 @@ app.get("/room/:slug", async (req, res) => {
 });
 
 app.get("/fatchtoken", (req: NewRequest, res) => {
-  const token = req.token;
+  const cookie = parse(req.headers.cookie || " ");
+  const token = cookie["chat-app-token"];
   if (!token) {
     res.json({
       msg: "Something is wrong",

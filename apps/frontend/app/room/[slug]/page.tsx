@@ -1,12 +1,10 @@
 import { BACKEND_URL } from "@/app/config";
 import ChatRoom from "@/component/ChatRoom";
 import axios from "axios";
-import getToken from "@/fatchInfo/getToken";
 
 async function getRoomId(slug: string) {
-  const token =await getToken()
   const response = await axios.get(`${BACKEND_URL}/room/${slug}`, {
-    headers: { Cookie: `chat-app-token=${token}` },
+    withCredentials: true,
   });
   return response.data.room.id;
 }
