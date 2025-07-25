@@ -4,23 +4,26 @@ import SpliteScreen from "@/component/SpliteScreen";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import ChatPage from "@/component/ChatPage";
 
 async function isLoggedIn() {
   const cookie = (await cookies()).get("chat-app-token")?.value;
   if (!cookie) redirect("/signin");
-  const decode = jwt.verify(cookie, process.env.JWT_SECRET ?? " ");
-  if (!decode) redirect("/signin");
+  try {
+    const decode = jwt.verify(cookie, process.env.JWT_SECRET ?? " ");
+    if (!decode) redirect("/signin");
+  } catch (e) {
+    redirect("/signin");
+  }
+  return cookie;
 }
 
 const Chat = async () => {
-  await isLoggedIn();
+  const token = await isLoggedIn();
   return (
     <>
-      <SpliteScreen leftValue="35%" rightValue="65%">
-        <LeftBlock></LeftBlock>
-        <RightBlock></RightBlock>
-      </SpliteScreen>
+      <ChatPage token={token} />
     </>
   );
 };

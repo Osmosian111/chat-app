@@ -3,7 +3,7 @@ import Card from "@/ui/card";
 import { useState } from "react";
 import PopUp from "./PopUp";
 
-const LeftBlock = () => {
+const LeftBlock = ({ socket }: { socket: WebSocket | undefined }) => {
   const [showModal, setShowModal] = useState(false);
   return (
     <div className="flex flex-col gap-3 h-full items-stretch">
@@ -17,7 +17,7 @@ const LeftBlock = () => {
         </button>
       </div>
       {showModal && (
-        <PopUp type="Join" closeFunction={() => setShowModal(false)} />
+        <PopUp type="Join" closeFunction={() => setShowModal(false)} socket={socket}/>
       )}
     </div>
   );

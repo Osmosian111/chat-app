@@ -1,19 +1,56 @@
 import Button from "@/ui/button";
 import React, { ChangeEvent, useState } from "react";
-import JoinRoom from "./JoinRoom";
+import axios from "axios";
+import { BACKEND_URL, FRONTEND_URL } from "@/app/config";
+import { useRouter } from "next/navigation";
 
 interface CreateRoomType {
   closeFunction: () => void;
   type: "Create" | "Join";
+  socket?: WebSocket | undefined;
 }
 
-const PopUp = ({ closeFunction, type }: CreateRoomType) => {
+const PopUp = ({ closeFunction, type, socket }: CreateRoomType) => {
   const [name, setName] = useState("");
-  const [intel, setIntel] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
+  };
+
+  const handleClick = async () => {
+    if (type === "Create") {
+      setLoading(true);
+      const response = await axios.post(
+        `${BACKEND_URL}/room`,
+        { name },
+        { withCredentials: true }
+      );
+      console.log(response);
+      setLoading(false);
+      closeFunction();
+    }
+    if (type === "Join") {
+      if (!socket) return;
+      setLoading(true);
+      const response = await axios.get(`${BACKEND_URL}/room/${name}`, {
+        withCredentials: true,
+      });
+      const roomId = response.data.room.id;
+      socket.send(
+        JSON.stringify({
+          type: "join_room",
+          roomId,
+        })
+      );
+      socket.onmessage = (message) => {
+        console.log(message.data);
+      };
+      setLoading(false);
+      closeFunction();
+      router.push(`${FRONTEND_URL}/chat?room=${encodeURIComponent(roomId)}`);
+    }
   };
 
   return (
@@ -48,10 +85,9 @@ const PopUp = ({ closeFunction, type }: CreateRoomType) => {
                   ? "Joining"
                   : "Join"
             }
-            onClick={() => setIntel(true)}
+            onClick={handleClick}
           />
         </div>
-        {type === "Join" && intel && <JoinRoom name={`${name}`} />}
       </div>
     </div>
   );

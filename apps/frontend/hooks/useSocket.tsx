@@ -1,17 +1,14 @@
 "use client";
 
 import { WS_URL } from "@/app/config";
-import getToken from "@/script/getToken";
 import { useEffect, useState } from "react";
 
-export default function useSocket() {
+export default function useSocket({ token }: { token: string }) {
   const [loading, setLoading] = useState(true);
   const [socket, setSocket] = useState<WebSocket>();
 
   useEffect(() => {
     async function socket() {
-      const token = await getToken();
-      console.log(token);
       const ws = new WebSocket(`${WS_URL}?token=${token}`);
       ws.onopen = () => {
         setSocket(ws);
@@ -19,6 +16,6 @@ export default function useSocket() {
       };
     }
     socket();
-  }, []);
+  }, [token]);
   return { loading, socket };
 }

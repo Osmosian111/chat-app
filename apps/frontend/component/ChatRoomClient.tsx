@@ -13,7 +13,7 @@ const ChatRoomClient = ({
 }) => {
   const [chats, setChats] = useState<{ message: string }[]>(message || []);
   const [currentMessage, setCurrentMessage] = useState("");
-  const { loading, socket } = useSocket();
+  const { loading, socket } = useSocket({token:" "});
   const router = useRouter();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
