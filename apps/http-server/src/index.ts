@@ -126,6 +126,14 @@ app.get("/chats/:roomId", async (req, res) => {
     where: {
       roomId: roomId,
     },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
     orderBy: {
       id: "desc",
     },

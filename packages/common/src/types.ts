@@ -12,3 +12,13 @@ export const SigninSchema = z.object({
 export const CreateRoomSchema = z.object({
   name: z.string().min(3).max(150),
 });
+
+export type ChatMessage = {
+  id: string;
+  message: string;
+  createdAt: string; // or Date, depending on your usage
+  user: {
+    id: string;
+    name: string;
+  };
+};

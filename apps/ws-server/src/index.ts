@@ -74,6 +74,10 @@ wss.on("connection", (ws, request) => {
             message: "Room joined",
           })
         );
+        console.log({
+          type: "notify",
+          message: "Room joined",
+        });
         return;
       }
       ws.send(
@@ -82,6 +86,10 @@ wss.on("connection", (ws, request) => {
           message: "Already in a room",
         })
       );
+      console.log({
+        type: "notify",
+        message: "Already in a room",
+      });
       return;
     }
 
@@ -96,6 +104,10 @@ wss.on("connection", (ws, request) => {
             message: "Join Room First",
           })
         );
+        console.log({
+          type: "notify",
+          message: "Join Room First",
+        });
         return;
       }
       const roomOfUsers = users.filter((u) => u.rooms === parsedData.roomId);
@@ -123,6 +135,10 @@ wss.on("connection", (ws, request) => {
             message: "Room does not exist",
           })
         );
+        console.log({
+          type: "notify",
+          message: "Room does not exist",
+        });
       }
     }
 
@@ -138,6 +154,10 @@ wss.on("connection", (ws, request) => {
           message: `Room left`,
         })
       );
+      console.log({
+        type: "notify",
+        message: `Room left`,
+      });
     }
   });
 
@@ -147,4 +167,8 @@ wss.on("connection", (ws, request) => {
       message: `connected to ws server`,
     })
   );
+  console.log({
+    type: "notify",
+    message: `connected to ws server`,
+  });
 });

@@ -7,7 +7,7 @@ import RightBlock from "./RightBlock";
 import useSocket from "@/hooks/useSocket";
 import Spinner from "@/ui/spinner";
 
-const ChatPage = (props: { token: string }) => {
+const ChatPage = (props: { token: string; userId: string }) => {
   const { loading, socket } = useSocket({ token: props.token });
 
   if (loading) return <Spinner />;
@@ -16,7 +16,7 @@ const ChatPage = (props: { token: string }) => {
     <>
       <SpliteScreen leftValue="35%" rightValue="65%">
         <LeftBlock socket={socket}></LeftBlock>
-        <RightBlock socket={socket}></RightBlock>
+        <RightBlock userId={props.userId} socket={socket}></RightBlock>
       </SpliteScreen>
     </>
   );
