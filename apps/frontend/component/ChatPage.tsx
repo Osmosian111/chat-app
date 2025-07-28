@@ -16,7 +16,7 @@ const ChatPage = (props: { token: string; userId: string }) => {
     <>
       <SpliteScreen leftValue="35%" rightValue="65%">
         <LeftBlock socket={socket}></LeftBlock>
-        <RightBlock userId={props.userId} socket={socket}></RightBlock>
+        <RightBlock userId={props.userId} loading={loading} socket={socket}></RightBlock>
       </SpliteScreen>
     </>
   );

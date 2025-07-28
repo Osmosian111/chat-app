@@ -3,17 +3,16 @@ import { ChatMessage } from "@repo/common/types";
 
 const MessageDialog = ({
   chat,
-  userId,index
+  userId,
 }: {
   chat: ChatMessage;
   userId: string;
-  index: number;
 }) => {
   return (
     <>
       {/* Receiver Message */}
       {userId == `${chat.user.id}` ? (
-        <div key={index} className="flex justify-end">
+        <div className="flex justify-end">
           <div className="bg-blue-600 text-white p-3 rounded-lg max-w-[80%] sm:max-w-[70%] break-words">
             {/* Sender's Name */}
             <p className="text-blue-200 text-[10px] font-semibold mb-1 text-right">
@@ -30,13 +29,15 @@ const MessageDialog = ({
           </div>
         </div>
       ) : (
-        <div key={index} className="flex justify-start">
+        <div className="flex justify-start">
           <div className="bg-gray-700 text-white p-3 rounded-lg max-w-[80%] sm:max-w-[70%] break-words">
             {/* Sender's Name */}
-            <p className="text-blue-400 text-[10px] font-semibold mb-1">John Doe</p>
+            <p className="text-blue-400 text-[10px] font-semibold mb-1">
+              {chat.user.name}
+            </p>
 
             {/* Message Text */}
-            <p className="text-sm">Hey! How are you?</p>
+            <p className="text-sm">{chat.message}</p>
 
             {/* Timestamp */}
             <span className="text-gray-400 text-[10px] block text-right mt-1">

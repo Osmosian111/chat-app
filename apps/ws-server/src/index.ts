@@ -57,8 +57,6 @@ wss.on("connection", (ws, request) => {
   ws.on("message", async (data) => {
     const parsedData = JSON.parse(data.toString());
     console.log(parsedData);
-    console.log(users[0]?.userId);
-    console.log(users[0]?.rooms);
 
     if (parsedData.type === "join_room") {
       const userExist = users.find((u) => u.userId === userId);
@@ -124,9 +122,14 @@ wss.on("connection", (ws, request) => {
           u.ws.send(
             JSON.stringify({
               type: "chat",
+              userId,
               message: parsedData.message,
             })
           );
+        });
+        console.log({
+          type: "notify",
+          message: "Message is Sent",
         });
       } catch (error) {
         ws.send(

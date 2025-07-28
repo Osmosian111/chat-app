@@ -86,7 +86,7 @@ app.post("/signin", async (req, res) => {
     })
   );
 
-  res.send({ Success: true });
+  res.send({ msg: "Signed in success", Success: true });
 });
 
 app.use(auth);
@@ -135,9 +135,9 @@ app.get("/chats/:roomId", async (req, res) => {
       },
     },
     orderBy: {
-      id: "desc",
+      id: "asc",
     },
-    take: 20,
+    take: 100,
   });
   if (!message.length) {
     res.json({ msg: "empty" });

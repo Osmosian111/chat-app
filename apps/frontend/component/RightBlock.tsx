@@ -10,9 +10,11 @@ import { ChatMessage } from "@repo/common/types";
 const RightBlock = ({
   socket,
   userId,
+  loading,
 }: {
   socket: WebSocket | undefined;
   userId: string;
+  loading: boolean;
 }) => {
   const url = useSearchParams();
   const roomId = decodeURIComponent(url.get("room") ?? "");
@@ -26,19 +28,43 @@ const RightBlock = ({
       const response = await axios.get(`${BACKEND_URL}/chats/${roomId}`, {
         withCredentials: true,
       });
-      console.log(response.data.message);
       setChats(response.data.message);
     }
     getChats();
   }, [roomId]);
 
   useEffect(() => {
-    console.log(chats);
-  }, [chats]);
+    console.log(loading);
+    if (!socket || loading) return;
+
+    socket.onmessage = (event) => {
+      const parsedData = JSON.parse(event.data);
+      if (parsedData.type === "notify") return;
+      console.log(parsedData.userId)
+      if (userId === parsedData.userId) return;
+
+      console.log("🚀 Incoming message:", parsedData);
+      console.log("💡 Your userId:", userId);
+      console.log("📤 Sender userId (from parsedData):", parsedData.userId);
+
+      setChats((c) => [
+        ...c,
+        {
+          user: {
+            id: parsedData.userId,
+            name: "Hello",
+          },
+          message: parsedData.message,
+        },
+      ]);
+    };
+    return () => {
+      socket.onmessage = null;
+    };
+  }, [socket, roomId, loading, userId]);
 
   const handleSendMessage = () => {
     if (!socket) return;
-    console.log(roomId);
     socket.send(
       JSON.stringify({
         type: "chat",
@@ -46,6 +72,16 @@ const RightBlock = ({
         roomId,
       })
     );
+    setChats((c) => [
+      ...c,
+      {
+        user: {
+          id: userId,
+          name: " ",
+        },
+        message,
+      },
+    ]);
     setMessage("");
   };
 
@@ -53,7 +89,7 @@ const RightBlock = ({
     <>
       <div className="flex flex-col h-full gap-2">
         {/* Message List */}
-        <MessageList chats={chats} userId={userId}/>
+        <MessageList chats={chats} userId={userId} />
 
         {/* Input Bar */}
         <div className="grid grid-cols-[1fr_auto] gap-2">

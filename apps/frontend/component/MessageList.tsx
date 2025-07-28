@@ -12,14 +12,10 @@ const MessageList = ({
   if (!chats) return;
   return (
     <>
-      <div className="flex-1 min-h-0 overflow-y-auto bg-gray-800 rounded-md p-4 border border-gray-700 h-full">
+      <div className="flex-1 min-h-0 overflow-y-auto bg-gray-800 rounded-md p-4 border border-gray-700 h-full custom-scrollbar">
         <div className="flex flex-col gap-3">
-          {chats.map((chat,index) => {
-            return (
-              <>
-                <MessageDialog index={index} userId={userId} chat={chat} />
-              </>
-            );
+          {chats.map((chat, index) => {
+            return <MessageDialog key={index} userId={userId} chat={chat} />;
           })}
         </div>
       </div>

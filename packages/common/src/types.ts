@@ -14,9 +14,9 @@ export const CreateRoomSchema = z.object({
 });
 
 export type ChatMessage = {
-  id: string;
+  id?: string;
   message: string;
-  createdAt: string; // or Date, depending on your usage
+  createdAt?: string; // or Date, depending on your usage
   user: {
     id: string;
     name: string;
