@@ -73,7 +73,7 @@ app.post("/signin", async (req, res) => {
     });
     return;
   }
-  const token = jwt.sign({ userId: user.id }, JWT_SECRET);
+  const token = jwt.sign({ userId: user.id, name: user.name }, JWT_SECRET);
 
   res.setHeader(
     "Set-Cookie",
