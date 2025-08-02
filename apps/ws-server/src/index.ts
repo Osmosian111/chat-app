@@ -8,7 +8,11 @@ import { prismaClient } from "@repo/db/client";
 interface User {
   userId: string;
   ws: WebSocket;
-  rooms: string;
+  rooms: string[];
+}
+
+interface ParsedData {
+  type: "init_rooms" | "join_room" | "chat" | "leave_room";
 }
 
 const wss = new WebSocketServer({ port: 8080 });
@@ -58,36 +62,67 @@ wss.on("connection", (ws, request) => {
     const parsedData = JSON.parse(data.toString());
     console.log(parsedData);
 
+    if (parsedData.type === "init_rooms") {
+      const user = users.find((u) => u.userId === userId);
+      if (user && !user.rooms.includes(parsedData.roomId)) {
+        user.rooms.push(parsedData.roomId);
+      }
+      if (!user) {
+        users.push({
+          userId,
+          ws,
+          rooms: [parsedData.roomId],
+        });
+      }
+      console.log(users);
+    }
+
     if (parsedData.type === "join_room") {
       const userExist = users.find((u) => u.userId === userId);
       if (!userExist) {
         users.push({
           userId,
           ws,
-          rooms: parsedData.roomId,
+          rooms: [parsedData.roomId],
+        });
+      }
+      if (userExist) {
+        userExist.rooms.push(parsedData.roomId);
+      }
+      try {
+        await prismaClient.room.update({
+          where: {
+            id: parsedData.roomId,
+          },
+          data: {
+            User_JoinedRooms: {
+              connect: { id: userId },
+            },
+          },
         });
         ws.send(
           JSON.stringify({
             type: "notify",
-            message: "Room joined",
+            message: "Room Joined",
           })
         );
         console.log({
           type: "notify",
-          message: "Room joined",
+          message: "Room Joined",
         });
-        return;
-      }
-      ws.send(
-        JSON.stringify({
+      } catch (error) {
+        ws.send(
+          JSON.stringify({
+            type: "notify",
+            message: "Already Room Joined",
+          })
+        );
+        console.log({
           type: "notify",
-          message: "Already in a room",
-        })
-      );
-      console.log({
-        type: "notify",
-        message: "Already in a room",
-      });
+          message: "Already Room Joined",
+        });
+      }
+
       return;
     }
 

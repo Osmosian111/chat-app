@@ -189,4 +189,25 @@ app.get("/logout", (req, res) => {
   res.json({ message: "Logged out", Success: true });
 });
 
+app.get("/rooms/joined", async (req: NewRequest, res) => {
+  const userId = req.userId;
+  const response = await prismaClient.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      Room_JoinedRooms: true,
+    },
+  });
+  if (response) {
+    res.json({
+      rooms: response.Room_JoinedRooms,
+    });
+    return;
+  }
+  res.json({
+    msg: "Bad Request",
+  });
+});
+
 app.listen(PORT);
