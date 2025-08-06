@@ -11,9 +11,31 @@ interface User {
   rooms: string[];
 }
 
-interface ParsedData {
-  type: "init_rooms" | "join_room" | "chat" | "leave_room";
-}
+type ParsedData =
+  | {
+      type: "init_rooms";
+      roomId: string;
+      userId: string;
+    }
+  | {
+      type: "join_room";
+      roomId: string;
+      userId: string;
+      userName: string;
+    }
+  | {
+      type: "chat";
+      roomId: string;
+      userId: string;
+      message: string;
+      userName: string;
+    }
+  | {
+      type: "leave_room";
+      roomId: string;
+      userId: string;
+      userName: string;
+    };
 
 const wss = new WebSocketServer({ port: 8080 });
 
@@ -59,15 +81,16 @@ wss.on("connection", (ws, request) => {
   }
 
   ws.on("message", async (data) => {
-    const parsedData = JSON.parse(data.toString());
-    console.log(parsedData);
+    const parsedData: ParsedData = JSON.parse(data.toString());
+    if (userId !== parsedData.userId) return;
+
+    const existingUser = users.find((u) => u.userId === userId);
 
     if (parsedData.type === "init_rooms") {
-      const user = users.find((u) => u.userId === userId);
-      if (user && !user.rooms.includes(parsedData.roomId)) {
-        user.rooms.push(parsedData.roomId);
+      if (existingUser && !existingUser.rooms.includes(parsedData.roomId)) {
+        existingUser.rooms.push(parsedData.roomId);
       }
-      if (!user) {
+      if (!existingUser) {
         users.push({
           userId,
           ws,
@@ -78,59 +101,69 @@ wss.on("connection", (ws, request) => {
     }
 
     if (parsedData.type === "join_room") {
-      const userExist = users.find((u) => u.userId === userId);
-      if (!userExist) {
+      if (!existingUser) {
         users.push({
           userId,
           ws,
           rooms: [parsedData.roomId],
         });
-      }
-      if (userExist) {
-        userExist.rooms.push(parsedData.roomId);
-      }
-      try {
         await prismaClient.room.update({
           where: {
             id: parsedData.roomId,
           },
           data: {
             User_JoinedRooms: {
-              connect: { id: userId },
+              connect: {
+                id: userId,
+              },
             },
           },
         });
-        ws.send(
-          JSON.stringify({
+      } else {
+        if (!existingUser.rooms.includes(parsedData.roomId)) {
+          existingUser.rooms.push(parsedData.roomId);
+          console.log(users);
+          await prismaClient.room.update({
+            where: {
+              id: parsedData.roomId,
+            },
+            data: {
+              User_JoinedRooms: {
+                connect: {
+                  id: userId,
+                },
+              },
+            },
+          });
+          ws.send(
+            JSON.stringify({
+              type: "notify",
+              msg: "Room joined",
+            })
+          );
+          console.log({
             type: "notify",
-            message: "Room Joined",
-          })
-        );
-        console.log({
-          type: "notify",
-          message: "Room Joined",
-        });
-      } catch (error) {
-        ws.send(
-          JSON.stringify({
+            msg: "Room joined",
+          });
+        } else {
+          ws.send(
+            JSON.stringify({
+              type: "notify",
+              msg: "Already joined",
+            })
+          );
+          console.log({
             type: "notify",
-            message: "Already Room Joined",
-          })
-        );
-        console.log({
-          type: "notify",
-          message: "Already Room Joined",
-        });
+            msg: "Already joined",
+          });
+        }
+        return;
       }
-
       return;
     }
 
     if (parsedData.type === "chat") {
-      const user = users.find(
-        (user) => user.userId === userId && user.rooms === parsedData.roomId
-      );
-      if (!user) {
+      if (!existingUser?.rooms.includes(parsedData.roomId)) {
         ws.send(
           JSON.stringify({
             type: "notify",
@@ -143,7 +176,9 @@ wss.on("connection", (ws, request) => {
         });
         return;
       }
-      const roomOfUsers = users.filter((u) => u.rooms === parsedData.roomId);
+      const usersWithRoomId = users.filter((u) =>
+        u.rooms.includes(parsedData.roomId)
+      );
       try {
         await prismaClient.chat.create({
           data: {
@@ -153,18 +188,27 @@ wss.on("connection", (ws, request) => {
           },
         });
 
-        roomOfUsers.map((u) => {
+        usersWithRoomId.map((u) => {
           u.ws.send(
             JSON.stringify({
               type: "chat",
               userId,
               message: parsedData.message,
+              name: parsedData.userName,
+              roomId: parsedData.roomId,
             })
           );
         });
         console.log({
           type: "notify",
           message: "Message is Sent",
+          msg: {
+            type: "chat",
+            userId,
+            message: parsedData.message,
+            name: parsedData.userName,
+            roomId: parsedData.roomId,
+          },
         });
       } catch (error) {
         ws.send(
@@ -181,10 +225,14 @@ wss.on("connection", (ws, request) => {
     }
 
     if (parsedData.type === "leave_room") {
-      users = users.filter((user) => {
-        if (!(user.userId === userId)) {
-          return user;
-        }
+      users = users.filter((user) => user.userId === userId);
+      await prismaClient.room.update({
+        where: { id: parsedData.roomId },
+        data: {
+          User_JoinedRooms: {
+            disconnect: { id: userId },
+          },
+        },
       });
       ws.send(
         JSON.stringify({

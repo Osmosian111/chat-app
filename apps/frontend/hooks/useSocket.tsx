@@ -10,19 +10,17 @@ type RoomResponse = {
   };
 };
 
-export default function useSocket({
-  token,
-  userId,
-}: {
+export default function useSocket(userInfo: {
   token: string;
   userId: string;
+  userName: string;
 }) {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [socket, setSocket] = useState<WebSocket>();
 
   useEffect(() => {
     async function socket() {
-      const ws = new WebSocket(`${WS_URL}?token=${token}`);
+      const ws = new WebSocket(`${WS_URL}?token=${userInfo.token}`);
       ws.onopen = async () => {
         setSocket(ws);
         await init_Room(ws);
@@ -30,7 +28,7 @@ export default function useSocket({
       };
     }
     socket();
-  }, [token]);
+  }, [userInfo.token]);
 
   async function init_Room(ws: WebSocket) {
     if (!ws) return;
@@ -48,8 +46,9 @@ export default function useSocket({
       ws.send(
         JSON.stringify({
           type: "init_rooms",
-          userId,
+          userId: userInfo.userId,
           roomId: room.id,
+          userName: userInfo.userName,
         })
       );
     }

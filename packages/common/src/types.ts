@@ -22,3 +22,9 @@ export type ChatMessage = {
     name: string;
   };
 };
+
+export type UserInfo = {
+  token: string;
+  userId: string;
+  userName: string;
+};

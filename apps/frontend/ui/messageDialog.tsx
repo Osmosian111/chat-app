@@ -1,13 +1,8 @@
 import React from "react";
 import { ChatMessage } from "@repo/common/types";
+import { Chats } from "@repo/db/client";
 
-const MessageDialog = ({
-  chat,
-  userId,
-}: {
-  chat: ChatMessage;
-  userId: string;
-}) => {
+const MessageDialog = ({ chat, userId }: { chat: Chats; userId: string }) => {
   return (
     <>
       {/* Receiver Message */}
@@ -24,7 +19,10 @@ const MessageDialog = ({
 
             {/* Timestamp */}
             <span className="text-gray-300 text-[10px] block text-right mt-1">
-              12:35 PM
+              {chat.createdAt.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </span>
           </div>
         </div>
@@ -41,7 +39,10 @@ const MessageDialog = ({
 
             {/* Timestamp */}
             <span className="text-gray-400 text-[10px] block text-right mt-1">
-              12:34 PM
+              {chat.createdAt.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </span>
           </div>
         </div>

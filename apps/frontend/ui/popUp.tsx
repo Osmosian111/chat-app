@@ -32,11 +32,12 @@ const PopUp = ({ closeFunction, type, socket }: CreateRoomType) => {
       closeFunction();
     }
     if (type === "Join") {
-      if (!socket) return;
+      if (!socket || !name.trim()) return;
       setLoading(true);
       const response = await axios.get(`${BACKEND_URL}/room/${name}`, {
         withCredentials: true,
       });
+      if (!response.data.room.id) return;
       const roomId = response.data.room.id;
       socket.send(
         JSON.stringify({
@@ -49,7 +50,7 @@ const PopUp = ({ closeFunction, type, socket }: CreateRoomType) => {
       };
       setLoading(false);
       closeFunction();
-      router.push(`${FRONTEND_URL}/chat?room=${encodeURIComponent(roomId)}`);
+      router.push(`${FRONTEND_URL}/chat`);
     }
   };
 

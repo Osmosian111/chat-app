@@ -5,7 +5,7 @@ import Button from "@/ui/button";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import CreateRoom from "./PopUp";
+import CreateRoom from "../ui/popUp";
 
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
